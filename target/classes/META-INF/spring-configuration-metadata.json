@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "app.video",
+      "type": "com.chmorn.config.GlobalConfig",
+      "sourceType": "com.chmorn.config.GlobalConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.video.dist-path",
+      "type": "java.lang.String",
+      "sourceType": "com.chmorn.config.GlobalConfig"
+    },
+    {
+      "name": "app.video.ffmpeg-path",
+      "type": "java.lang.String",
+      "sourceType": "com.chmorn.config.GlobalConfig"
+    },
+    {
+      "name": "app.video.node-path",
+      "type": "java.lang.String",
+      "sourceType": "com.chmorn.config.GlobalConfig"
+    }
+  ],
+  "hints": []
+}
