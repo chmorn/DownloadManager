@@ -14,26 +14,44 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @date 2021/7/26
  **/
 public class QueueThreadPool {
-    //队列（存放下载地址）
-    private static BlockingQueue<String> queue;
     //下载线程池
     private static List<QueueModel> queueThreads;
 
     private QueueThreadPool(){
     }
 
-    public static synchronized BlockingQueue<String> getQueue(){
-        if(queue == null){
-            return new LinkedBlockingQueue<String>(10);
-        }
-        return queue;
-    }
-
     public static synchronized List<QueueModel> getQueueThreads(){
         if(queueThreads == null){
-            return new ArrayList<QueueModel>();
+            return new ArrayList<QueueModel>(4);
         }
         return queueThreads;
+    }
+
+    public static synchronized boolean removeThread(QueueModel removeModel){
+        try {
+            queueThreads.remove(removeModel);
+        }catch (Exception e){
+            //e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static synchronized boolean stopThread(QueueModel removeModel){
+        try {
+            removeModel.setState(1);
+        }catch (Exception e){
+            //e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public static synchronized void addQueueThreads(QueueModel model) {
+        if(queueThreads == null){
+            queueThreads = new ArrayList<QueueModel>();
+        }
+        queueThreads.add(model);
     }
 
 }

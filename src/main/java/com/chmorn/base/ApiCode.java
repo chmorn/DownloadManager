@@ -21,6 +21,9 @@ public enum ApiCode {
     TIMEEND_ERROR("0042","结束时间错误"),
     M3U8_ERROR("0043","m3u8地址有误，连接异常"),
     M3U8_TIMEOUT("0044","m3u8地址连接超时"),
+    M3U8_FORMAT("0045","m3u8配置文件读取失败，请检查格式"),
+    THREAD_MAX("0046","已达到下载线程上限"),
+    STOPDOWNLOAD_IDERROR("0047","请输入正确的id"),
     OTHER("other","其他异常");
 
     private String code;

@@ -20,6 +20,8 @@ public class GlobalConfig {
     private String ffmpegPath;
     @Value("${app.video.nodePath}")
     private String nodePath;
+    @Value("${app.video.maxThreads}")
+    private int maxThreads;
 
     public String getQqPath() {
         return qqPath;
@@ -45,12 +47,21 @@ public class GlobalConfig {
         this.nodePath = nodePath;
     }
 
+    public int getMaxThreads() {
+        return maxThreads;
+    }
+
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+    }
+
     @Override
     public String toString() {
         return "GlobalConfig{" +
                 "qqPath='" + qqPath + '\'' +
                 ", ffmpegPath='" + ffmpegPath + '\'' +
                 ", nodePath='" + nodePath + '\'' +
+                ", maxThreads=" + maxThreads +
                 '}';
     }
 }

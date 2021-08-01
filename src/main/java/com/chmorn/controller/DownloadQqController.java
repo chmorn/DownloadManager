@@ -147,7 +147,8 @@ public class DownloadQqController {
             return ApiResult.result(ApiCode.FAIL,"发生异常："+e.getMessage());
         }
         //获取m3u8地址
-        return ApiResult.result(ApiCode.SUCC,HttpPostUtil.doPost(ckeyModel));
+        //return ApiResult.result(ApiCode.SUCC,HttpPostUtil.doPost(ckeyModel));
+        return null;
     }
 
     @GetMapping(value = "/resolver")
