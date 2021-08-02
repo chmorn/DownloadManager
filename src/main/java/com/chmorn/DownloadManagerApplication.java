@@ -32,6 +32,7 @@ public class DownloadManagerApplication extends AbstractJavaFxApplicationSupport
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("定时下载");
+        stage.setResizable(false);//禁止调整窗口大小
         super.start(stage);
     }
 

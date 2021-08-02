@@ -19,8 +19,11 @@ spring:
 # 日志配置
 logging:
   level:
-    com.chen.cms: debug
-    org.springframework: warn
+    com.chmorn: debug
+    com.browniebytes: debug
+    org.springframework: info
+  file:
+    name: logs/download.log
 
 app:
   video:
