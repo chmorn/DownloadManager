@@ -80,9 +80,6 @@ public class WriteQueue implements Runnable {
 		String line = null;
         BufferedReader br = null;
 
-		//this.timeStart = timeStart;
-		//this.timeEnd = 0;
-
 		LocalDateTime start = LocalDateTime.parse(timeStart,dateTimeFormatter);
 		LocalDateTime stop = LocalDateTime.parse(timeEnd,dateTimeFormatter);
 

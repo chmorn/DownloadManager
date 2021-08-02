@@ -3,7 +3,7 @@ root {
 }
 
 .root {
-     -fx-background-image: url("javafx/background.png");
+     -fx-background-image: url("background.png");
 }
 
 /*#time-text {

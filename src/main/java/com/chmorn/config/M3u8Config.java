@@ -25,6 +25,8 @@ public class M3u8Config {
         if(m3u8List == null){
             m3u8List = new ArrayList<M3u8Model>();
             String path = M3u8Config.class.getResource("/").getPath();
+            //String path = M3u8Config.class.getResource("user.dir").getPath();
+            //String path = System.getProperty("user.dir");
             BufferedReader br = new BufferedReader(new FileReader(path+"application.m3u8"));
             String line = null;
             String name = null;

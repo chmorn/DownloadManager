@@ -9,6 +9,7 @@ import com.chmorn.iptv.M3u8Model;
 import com.chmorn.model.RequestModel;
 import com.chmorn.model.ResponseModel;
 import de.felixroske.jfxsupport.FXMLController;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -98,7 +99,7 @@ public class DownloadController implements Initializable {
                         alert.setContentText("正在停止id("+selectData.getDownloadId()+")的下载，请勿操作！");
                         alert.showAndWait();
                         ApiResult result = restTemplate.getForObject(iptv+"/iptv/stopDownload?downloadId="+selectData.getDownloadId(), ApiResult.class);
-                        System.out.println(result);
+                        //System.out.println(result);
                         String rescode = result.getCode();
                         if(rescode.equals(ApiCode.SUCC.getCode())){
                             alert.setTitle("停止提示框");
@@ -112,7 +113,6 @@ public class DownloadController implements Initializable {
                             alert.showAndWait();
                         }
                         refreshGrid();
-                        return;
                     });
 
                     if (empty) {
@@ -153,7 +153,7 @@ public class DownloadController implements Initializable {
 
         RequestModel model = new RequestModel(m3u8box.getValue().toString(),downloadDir.getText(),start,stop);
         ApiResult result = restTemplate.postForObject(iptv+"/iptv/download",model, ApiResult.class);
-        System.out.println(result);
+        //System.out.println(result);
         String rescode = result.getCode();
         if(rescode.equals(ApiCode.SUCC.getCode())){
             alert.setContentText("成功！");
@@ -173,7 +173,7 @@ public class DownloadController implements Initializable {
         directoryChooser.setTitle("请选择保存目录！");
         File file = directoryChooser.showDialog(container.getScene().getWindow());//这个file就是选择的文件夹了
         String path = file.getPath();
-        System.out.println(path);
+        //System.out.println(path);
         downloadDir.setText(path);
         //文件选择器
 //        FileChooser fileChooser = new FileChooser();
@@ -190,26 +190,38 @@ public class DownloadController implements Initializable {
         m3u8box.getSelectionModel().selectFirst();
     }
 
-    private void refreshGrid(){
-        ApiResult result = restTemplate.getForObject(iptv+"/iptv/getDownloadList", ApiResult.class);
-        System.out.println(result);
-        String rescode = result.getCode();
-        if(rescode.equals(ApiCode.SUCC.getCode())){
-            ObservableList<ResponseModel> observableList = FXCollections.observableArrayList();
-            JSONArray arr = JSONArray.fromObject(result.getData());
-            for (int i = 0; i < arr.size(); i++) {
-                ResponseModel responseModel = new ResponseModel();
-                responseModel.setDownloadId(JSONObject.fromObject(arr.getJSONObject(i)).getInt("downloadId"));
-                responseModel.setM3u8url(JSONObject.fromObject(arr.getJSONObject(i)).getString("m3u8url"));
-                responseModel.setDistPath(JSONObject.fromObject(arr.getJSONObject(i)).getString("distPath"));
-                responseModel.setTimeStart(JSONObject.fromObject(arr.getJSONObject(i)).getString("timeStart"));
-                responseModel.setTimeEnd(JSONObject.fromObject(arr.getJSONObject(i)).getString("timeEnd"));
-                int state = JSONObject.fromObject(arr.getJSONObject(i)).getInt("state");
-                responseModel.setStateValue(state==0?"正常":"停止");
-                observableList.add(responseModel);
+    /**
+     * 刷新下载列表展示
+     * 说明：UI刷新频率过快会发生异常：Exception in thread "JavaFX Application Thread"
+     * javafx提供了Platform.runLater用于解决该问题
+    **/
+    public void refreshGrid(){
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                ApiResult result = restTemplate.getForObject(iptv+"/iptv/getDownloadList", ApiResult.class);
+                //System.out.println(result);
+                String rescode = result.getCode();
+                if(rescode.equals(ApiCode.SUCC.getCode())){
+                    ObservableList<ResponseModel> observableList = FXCollections.observableArrayList();
+                    JSONArray arr = JSONArray.fromObject(result.getData());
+                    for (int i = 0; i < arr.size(); i++) {
+                        ResponseModel responseModel = new ResponseModel();
+                        responseModel.setDownloadId(JSONObject.fromObject(arr.getJSONObject(i)).getInt("downloadId"));
+                        responseModel.setM3u8url(JSONObject.fromObject(arr.getJSONObject(i)).getString("m3u8url"));
+                        responseModel.setDistPath(JSONObject.fromObject(arr.getJSONObject(i)).getString("distPath"));
+                        responseModel.setTimeStart(JSONObject.fromObject(arr.getJSONObject(i)).getString("timeStart"));
+                        responseModel.setTimeEnd(JSONObject.fromObject(arr.getJSONObject(i)).getString("timeEnd"));
+                        int state = JSONObject.fromObject(arr.getJSONObject(i)).getInt("state");
+                        responseModel.setStateValue(state==0?"正常":"停止");
+                        observableList.add(responseModel);
+                    }
+                    mDownloadTable.setItems(observableList);
+                }
             }
-            mDownloadTable.setItems(observableList);
-        }
+        });
+
+
     }
 
 }

@@ -6,16 +6,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
+import com.chmorn.javafx.DownloadController;
+import com.chmorn.utils.SpringUtil;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -113,6 +112,19 @@ public class ReadQueue implements Runnable {
 			//结束时间已过，并且队列里的地址都已下载完,退出
 			if (LocalDateTime.now().isAfter(stop) && queue.size()==0){
 				exit = true;
+				List<QueueModel> queueThreads = QueueThreadPool.getQueueThreads();
+				for (int i = 0; i < queueThreads.size(); i++) {
+					if(queue == queueThreads.get(i).getReadQueue()){
+						queueThreads.get(i).setState(1);
+						System.out.println("---------正常结束");
+						break;
+					}
+				}
+				try {
+					startMix();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				break;
 			}
         	if(queue.size()>0) {
@@ -135,6 +147,8 @@ public class ReadQueue implements Runnable {
     		urlstr = null;
     		url = null;
     		file = null;
+			DownloadController bean = SpringUtil.getBean(DownloadController.class);
+			bean.refreshGrid();
         }
 		
 	}
