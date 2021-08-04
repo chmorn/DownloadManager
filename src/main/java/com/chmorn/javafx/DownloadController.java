@@ -4,6 +4,7 @@ package com.chmorn.javafx;
 import com.browniebytes.javafx.control.DateTimePicker;
 import com.chmorn.base.ApiCode;
 import com.chmorn.base.ApiResult;
+import com.chmorn.base.DownloadStateEnum;
 import com.chmorn.config.M3u8Config;
 import com.chmorn.iptv.M3u8Model;
 import com.chmorn.model.RequestModel;
@@ -21,6 +22,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestTemplate;
 
@@ -31,6 +34,8 @@ import java.util.*;
 
 @FXMLController
 public class DownloadController implements Initializable {
+
+    private static Logger logger = LoggerFactory.getLogger(DownloadController.class);
 
     @FXML
     private AnchorPane container;
@@ -104,7 +109,7 @@ public class DownloadController implements Initializable {
                         if(rescode.equals(ApiCode.SUCC.getCode())){
                             alert.setTitle("停止提示框");
                             alert.setHeaderText(null);
-                            alert.setContentText("停止成功");
+                            alert.setContentText("停止成功:"+result.getMsg());
                             alert.showAndWait();
                         }else{
                             alert.setTitle("停止提示框");
@@ -129,6 +134,7 @@ public class DownloadController implements Initializable {
 
     }
 
+    //下载按钮
     @FXML
     protected void startDownloadButtonAction(ActionEvent event) {
         ProgressBar progressBar = new ProgressBar();
@@ -166,6 +172,7 @@ public class DownloadController implements Initializable {
         }
     }
 
+    //选择文件夹按钮
     @FXML
     protected void chooseDirectoryButtonAction(ActionEvent event) {
         //文件夹选择器
@@ -179,6 +186,13 @@ public class DownloadController implements Initializable {
 //        FileChooser fileChooser = new FileChooser();
 //        fileChooser.setTitle("Open Resource File");
 //        fileChooser.showOpenDialog(stage);
+    }
+
+    //刷新下载列表按钮
+    @FXML
+    protected void refreshDownloadButtonAction(ActionEvent event){
+        logger.info("刷新。。。。。。。。。。。。。。");
+        refreshGrid();
     }
 
     /**
@@ -213,7 +227,7 @@ public class DownloadController implements Initializable {
                         responseModel.setTimeStart(JSONObject.fromObject(arr.getJSONObject(i)).getString("timeStart"));
                         responseModel.setTimeEnd(JSONObject.fromObject(arr.getJSONObject(i)).getString("timeEnd"));
                         int state = JSONObject.fromObject(arr.getJSONObject(i)).getInt("state");
-                        responseModel.setStateValue(state==0?"正常":"停止");
+                        responseModel.setStateValue(DownloadStateEnum.getMsg(state));
                         observableList.add(responseModel);
                     }
                     mDownloadTable.setItems(observableList);

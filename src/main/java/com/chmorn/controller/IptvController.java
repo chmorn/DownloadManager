@@ -97,39 +97,14 @@ public class IptvController {
         List<QueueModel> queueThreads = QueueThreadPool.getQueueThreads();
         long start = System.currentTimeMillis();//用来计算时间
         for (int i = 0; i < queueThreads.size(); i++) {
-            if(queueThreads.get(i).getDownloadId() == id){
+            if (queueThreads.get(i).getDownloadId() == id) {
                 QueueModel removeModel = queueThreads.get(i);
-                //1、停线程(先停写线程，再停读线程，防止读线程停止了，写线程还在往队列写,导致队列数据量大，内存溢出)
-                //停写线程
-                removeModel.getWriteQueue().setExit(true);
-                while(true){
-                    if(!removeModel.getWriteThread().isAlive()){
-                        removeModel.setWriteQueue(null);
-                        //停读线程
-                        removeModel.getReadQueue().setExit(true);
-                        if(!removeModel.getReadThread().isAlive()){
-                            removeModel.setReadQueue(null);
-                            break;
-                        }
-                    }
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                //2、从下载列表中修改该条数据状态为停止下载
-                boolean removeFlag = QueueThreadPool.stopThread(removeModel);
-                if (!removeFlag){
-                    return ApiResult.result(ApiCode.STOPDOWNLOAD_IDERROR,"发生异常，请检查该下载任务是否还在下载，如还在下载，请关闭客户端");
-                }
+                //启动停止线程后台慢慢停止，然后跳出循环返回前端结果
+                new Thread(new StopDownThread(removeModel)).start();
                 break;
             }
         }
-        long end = System.currentTimeMillis();//用来计算时间
-        long userSeconds = (end-start)/1000;
-        System.out.println("停止成功，耗时(秒):"+userSeconds);
-        return ApiResult.result(ApiCode.SUCC,"停止成功，耗时:"+userSeconds+"秒");
+        return ApiResult.result(ApiCode.SUCC,"已提交申请，后台正在停止，请10-20秒后刷新列表查看");
     }
 
     @PostMapping(value = "/download")

@@ -2,6 +2,8 @@ package com.chmorn.config;
 
 import com.chmorn.iptv.M3u8Model;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,6 +17,10 @@ import java.util.List;
  * @date 2021/7/27
  **/
 public class M3u8Config {
+    public static void main(String[] args) throws IOException {
+        String path = System.getProperty("user.dir");
+        System.out.println(path);
+    }
     private static List<M3u8Model> m3u8List;
 
     private M3u8Config(){
@@ -24,10 +30,16 @@ public class M3u8Config {
     public static synchronized List<M3u8Model> getM3u8List() throws IOException {
         if(m3u8List == null){
             m3u8List = new ArrayList<M3u8Model>();
-            String path = M3u8Config.class.getResource("/").getPath();
-            //String path = M3u8Config.class.getResource("user.dir").getPath();
-            //String path = System.getProperty("user.dir");
-            BufferedReader br = new BufferedReader(new FileReader(path+"application.m3u8"));
+            //String path = M3u8Config.class.getResource("/").getPath();
+            String path = System.getProperty("user.dir");
+            BufferedReader br = new BufferedReader(new FileReader(path+ File.separator +"application.m3u8"));
+
+            //InputStream is=M3u8Config.class.getResourceAsStream("application.m3u8");
+            //BufferedReader br=new BufferedReader(new InputStreamReader(is));
+
+//            Resource resource = new ClassPathResource("application.m3u8");
+//            InputStream inputStream = resource.getInputStream();
+//            BufferedReader br=new BufferedReader(new InputStreamReader(inputStream));
             String line = null;
             String name = null;
             String url = null;

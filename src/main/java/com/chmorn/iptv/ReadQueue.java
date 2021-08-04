@@ -69,12 +69,14 @@ public class ReadQueue implements Runnable {
 		this.queue = queue;
 		if(!distPath.endsWith(File.separator)){
 			this.distPath = distPath+File.separator;
+		}else{
+			this.distPath = distPath;
 		}
 		this.downloadId = downloadId;
 		this.timeStart = timeStart;
 		this.timeEnd = timeEnd;
 		this.piecePath = this.distPath+"temp"+downloadId+File.separator;
-		this.mergeFileName = this.distPath + downloadId+"ts";
+		this.mergeFileName = this.distPath + downloadId+".ts";
 	}
 
 	@Override
